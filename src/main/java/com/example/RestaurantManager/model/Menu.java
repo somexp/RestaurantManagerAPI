@@ -18,7 +18,7 @@ public class Menu {
         return uuid;
     }
 
-    public String getMenuJSON()
+    public JSONObject getMenuJSON()
     {
         JSONObject menuObj = new JSONObject();
 
@@ -28,7 +28,7 @@ public class Menu {
             menuObj.put(key, menuItem.getMenuItemJSON());
         }
 
-        return menuObj.toString();
+        return menuObj;
     }
 
     public MenuItem getItem(String uuid)

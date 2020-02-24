@@ -20,7 +20,7 @@ public class RestaurantContainer {
         return restaurantId;
     }
 
-    public static String getRestaurantsJSON()
+    public static JSONObject getRestaurantsJSON()
     {
         JSONObject it = new JSONObject();
         for (String key : restaurantMap.keySet())
@@ -29,10 +29,17 @@ public class RestaurantContainer {
             JSONObject restaurantObj = restaurant.getRestaurantJSON();
             it.put(key, restaurantObj);
         }
-        return it.toString();
+        return it;
     }
 
-    public static String getMenuJSON(String restaurantId)
+    public static JSONObject getRestaurantJSON(String uuid)
+    {
+        Restaurant restaurant = restaurantMap.get(uuid);
+
+        return restaurant.getRestaurantJSON();
+    }
+
+    public static JSONObject getMenuJSON(String restaurantId)
     {
         Restaurant restaurant = restaurantMap.get(restaurantId);
 
