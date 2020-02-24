@@ -16,13 +16,13 @@ public class Restaurant {
         this.menu = new Menu();
     }
 
-    public String getRestaurantJSON()
+    public JSONObject getRestaurantJSON()
     {
         JSONObject restaurantObject = new JSONObject();
         restaurantObject.put("Name", name);
         restaurantObject.put("Location", location.toString());
         restaurantObject.put("Category", category);
-        return restaurantObject.toString();
+        return restaurantObject;
     }
 
     public String getName()

@@ -1,5 +1,7 @@
 package com.example.RestaurantManager.model;
 
+import org.json.JSONObject;
+
 import java.util.*;
 
 public class Menu {
@@ -14,6 +16,19 @@ public class Menu {
         String uuid = UUID.randomUUID().toString();
         menuList.put(uuid, menuItem);
         return uuid;
+    }
+
+    public String getMenuJSON()
+    {
+        JSONObject menuObj = new JSONObject();
+
+        for(String key: menuList.keySet())
+        {
+            MenuItem menuItem = menuList.get(key);
+            menuObj.put(key, menuItem.getMenuItemJSON());
+        }
+
+        return menuObj.toString();
     }
 
     public MenuItem getItem(String uuid)

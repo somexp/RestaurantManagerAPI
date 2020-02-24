@@ -26,23 +26,44 @@ public class RestaurantContainer {
         for (String key : restaurantMap.keySet())
         {
             Restaurant restaurant = restaurantMap.get(key);
-            JSONObject restaurantObj = new JSONObject(restaurant.getRestaurantJSON());
+            JSONObject restaurantObj = restaurant.getRestaurantJSON();
             it.put(key, restaurantObj);
         }
         return it.toString();
     }
+
+    public static String getMenuJSON(String restaurantId)
+    {
+        Restaurant restaurant = restaurantMap.get(restaurantId);
+
+        Menu menu = restaurant.getMenu();
+
+        return menu.getMenuJSON();
+    }
+
+    public static JSONObject getMenuItemJSON(String restaurantId, String menuItemId)
+    {
+        Restaurant restaurant = restaurantMap.get(restaurantId);
+
+        Menu menu = restaurant.getMenu();
+
+        MenuItem menuItem = menu.getItem(menuItemId);
+
+        return menuItem.getMenuItemJSON();
+    }
+
 
     public static Map<String, Restaurant> getRestaurantMap()
     {
         return restaurantMap;
     }
 
-    public Restaurant getRestaurant(String uuid)
+    public static Restaurant getRestaurant(String uuid)
     {
         return restaurantMap.get(uuid);
     }
 
-    public boolean removeItem(String uuid)
+    public static boolean removeRestaurant(String uuid)
     {
         if (!restaurantMap.containsKey(uuid))
         {
@@ -54,7 +75,7 @@ public class RestaurantContainer {
         return true;
     }
 
-    public String removeRestaurant(Restaurant restaurant)
+    public static String removeRestaurant(Restaurant restaurant)
     {
         for(String key : restaurantMap.keySet())
         {
@@ -66,6 +87,30 @@ public class RestaurantContainer {
         }
 
         return "Not Found";
+    }
+
+    public static String addMenuItem(String restaurantId, MenuItem menuItem)
+    {
+        if (!restaurantMap.containsKey(restaurantId))
+        {
+            return "Not Found";
+        }
+
+        Restaurant restaurant = restaurantMap.get(restaurantId);
+
+        return restaurant.addMenuItem(menuItem);
+    }
+
+    public static boolean removeMenuItem(String restaurantId, String menuItemId)
+    {
+        if (!restaurantMap.containsKey(restaurantId))
+        {
+            return false;
+        }
+
+        Restaurant restaurant = restaurantMap.get(restaurantId);
+
+        return restaurant.removeMenuItem(menuItemId);
     }
 
 

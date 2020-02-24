@@ -1,5 +1,7 @@
 package com.example.RestaurantManager.model;
 
+import org.json.JSONObject;
+
 public class MenuItem {
 
     private String name;
@@ -11,6 +13,15 @@ public class MenuItem {
         this.name = name;
         this.description = description;
         this.price = price;
+    }
+
+    public JSONObject getMenuItemJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Name", name);
+        jsonObject.put("Description", description);
+        jsonObject.put("Price", price);
+        return jsonObject;
     }
 
     public String getName()
