@@ -1,5 +1,8 @@
 package com.example.RestaurantManager.controller;
 
+import com.example.RestaurantManager.model.Location;
+import com.example.RestaurantManager.model.MenuItem;
+import com.example.RestaurantManager.model.Restaurant;
 import com.example.RestaurantManager.model.RestaurantContainer;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
@@ -40,9 +43,9 @@ public class MenuController {
     }
 
 
-    @RequestMapping(value = "/{restaurantId}/menuItemId", method = RequestMethod.GET)
+    @RequestMapping(value = "/{restaurantId}/{menuItemId}", method = RequestMethod.GET)
     public ResponseEntity<String> getMenuItem(@PathVariable("menuId") String menuId,
-                                              @PathVariable("menuId") String menuItemId) {
+                                              @PathVariable("menuItemId") String menuItemId) {
 
         String menuItem = "";
 
@@ -57,6 +60,23 @@ public class MenuController {
         }
 
         return new ResponseEntity(menuItem, HttpStatus.OK);
+    }
+
+    @PostMapping("/addMenuItem")
+    public String addItem(String restaurantId, String name, String description, String price) {
+
+        double priceDoub = 0.0;
+        try {
+            priceDoub = Double.valueOf(price);
+        }
+        catch (ClassCastException cce)
+        {
+            return "Invalid Price";
+        }
+
+        MenuItem menuItem = new MenuItem(name, description, priceDoub);
+
+        return RestaurantContainer.addMenuItem(restaurantId, menuItem);
     }
 }
 

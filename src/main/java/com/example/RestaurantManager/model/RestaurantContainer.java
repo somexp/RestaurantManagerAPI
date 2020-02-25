@@ -20,6 +20,15 @@ public class RestaurantContainer {
         return restaurantId;
     }
 
+    public static String addRestaurant(String name, Location location, String category)
+    {
+        Restaurant restaurant = new Restaurant(name, location, category);
+
+        String restaurantId = UUID.randomUUID().toString();
+        restaurantMap.put(restaurantId, restaurant);
+        return restaurantId;
+    }
+
     public static JSONObject getRestaurantsJSON()
     {
         JSONObject it = new JSONObject();
@@ -102,10 +111,10 @@ public class RestaurantContainer {
         {
             return "Not Found";
         }
-
         Restaurant restaurant = restaurantMap.get(restaurantId);
-
-        return restaurant.addMenuItem(menuItem);
+        String menuItemId = restaurant.addMenuItem(menuItem);
+        restaurantMap.put(restaurantId, restaurant);
+        return menuItemId;
     }
 
     public static boolean removeMenuItem(String restaurantId, String menuItemId)

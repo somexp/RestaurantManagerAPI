@@ -16,6 +16,21 @@ public class Restaurant {
         this.menu = new Menu();
     }
 
+    public Restaurant(String name, Location location, String category )
+    {
+        this.name = name;
+        this.location = location;
+        for (Category aCat: Category.values())
+        {
+            if (category.equals(aCat.toString()))
+            {
+                this.category = aCat;
+            }
+        }
+
+        this.menu = new Menu();
+    }
+
     public JSONObject getRestaurantJSON()
     {
         JSONObject restaurantObject = new JSONObject();
@@ -80,5 +95,17 @@ public class Restaurant {
         return menu.removeItem(menuItem);
     }
 
-    public enum Category{Pizza, Fastfood, Steak, Seafood,  Mexican, Chinese,Fuzion, Fine_Dinning};
+    public static boolean validCategory(String cat)
+    {
+        for (Category aCat: Category.values())
+        {
+            if (cat.equals(aCat.toString()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public enum Category{Pizza, Fastfood, Steak, Seafood,  Mexican, Chinese, Fuzion, Fine_Dinning};
 }
