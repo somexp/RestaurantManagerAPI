@@ -1,55 +1,76 @@
 package com.example.RestaurantManager.model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class Location {
 
-    private Street street;
-    private int number;
+    private String street;
+    private String city;
+    private String state;
+    private String zipcode;
 
-    public Location(int number, Street street)
+    public Location(String street, String city, String state, String zipcode)
     {
-        this.number = number;
         this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode;
     }
 
-    public Location(int number, String street)
-    {
-        this.number = number;
-
-        for (Street aStreet: Street.values())
-        {
-            if (street.equals(aStreet.toString()))
-            {
-                this.street = aStreet;
-            }
-        }
-    }
-
-    public String toString()
+    /**public String toString()
     {
         return number + " " + street.toString();
-    }
-
-    public int getNumber()
+    }**/
+    public JSONObject getJSON()
     {
-        return number;
+        JSONObject jsonLoc = new JSONObject();
+        jsonLoc.put("Street", street);
+        jsonLoc.put("City", city);
+        jsonLoc.put("State", state);
+        jsonLoc.put("Zipcode", zipcode);
+        return jsonLoc;
     }
 
-    public Street getStreet()
+    public String getStreet()
     {
         return street;
     }
 
-    public static boolean validStreet(String st)
+    public String getCity()
     {
-        for (Street aStreet: Street.values())
-        {
-            if (st.equals(aStreet.toString()))
-            {
-                return true;
-            }
-        }
-        return false;
+        return city;
     }
 
-    public enum Street{A, B, C, D, F, G, H, I, J, K, L, First, Second, Third, Fourth, Fifth, Sixth, Seventh};
+    public String getState()
+    {
+        return state;
+    }
+
+    public String getZipcode()
+    {
+        return zipcode;
+    }
+
+
+
+    public void setStreet()
+    {
+        this.street = street;
+    }
+
+    public void setCity()
+    {
+        this.city = city;
+    }
+
+    public void setState()
+    {
+        this.state = state;
+    }
+
+    public void setZipcode()
+    {
+        this.zipcode = zipcode;
+    }
 }

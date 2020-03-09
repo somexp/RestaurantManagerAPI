@@ -1,6 +1,7 @@
 package com.example.RestaurantManager.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,9 +12,9 @@ public class RestaurantContainer {
 
     private static Map<String, Restaurant> restaurantMap = new HashMap<>();
 
-    public static String addRestaurant(String name, Location location, Restaurant.Category category)
+    public static String addRestaurant(String name, Location location, List<Restaurant.Category> categories)
     {
-        Restaurant restaurant = new Restaurant(name, location, category);
+        Restaurant restaurant = new Restaurant(name, location, categories);
 
         String restaurantId = UUID.randomUUID().toString();
         restaurantMap.put(restaurantId, restaurant);

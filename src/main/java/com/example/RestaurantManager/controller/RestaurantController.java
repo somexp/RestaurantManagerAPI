@@ -3,6 +3,7 @@ package com.example.RestaurantManager.controller;
 import com.example.RestaurantManager.model.Location;
 import com.example.RestaurantManager.model.Restaurant;
 import com.example.RestaurantManager.model.RestaurantContainer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,13 +60,34 @@ public class RestaurantController {
     }
 
 
-    @PostMapping("/addRestaurant")
-    public String processForm(String name, String location, String category) {
 
-        if(!validLocation(location))
+    @RequestMapping(value = "/categories", method = RequestMethod.GET)
+    public ResponseEntity<String> getCategories() {
+
+        String categories = "";
+        try
         {
-            return "Location data not valid";
+            JSONArray catArray = new JSONArray();
+
+            List<String> catList = Restaurant.getCategories();
+
+            for (String category : catList)
+            {
+                catArray.put(category);
+            }
+            categories = catArray.toString();
         }
+        catch(Exception e)
+        {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity(categories, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/addRestaurant")
+    public String processForm(String name, String street, String city, String state, String zipcode, String category) {
 
         if(!Restaurant.validCategory(category))
         {
@@ -73,29 +95,10 @@ public class RestaurantController {
         }
 
         //addRestaurant(String name, Location location, Restaurant.Category category)
-        String[] splt = location.split(" ");
-        int number = Integer.valueOf(splt[0]);
-        String street = splt[1];
-        Location location1 = new Location(number, street);
+        Location location1 = new Location(street, city, state, zipcode);
 
         String restaurantId = RestaurantContainer.addRestaurant(name, location1, category);
 
         return "restaurantId";
-    }
-
-    private boolean validLocation(String location)
-    {
-        String[] splt = location.split(" ");
-        try {
-            int number = Integer.valueOf(splt[0]);
-        }
-        catch(Exception e)
-        {
-            return false;
-        }
-
-        String street = splt[1];
-        return Location.validStreet(street);
-
     }
 }

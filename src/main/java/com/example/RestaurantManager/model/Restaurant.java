@@ -1,30 +1,36 @@
 package com.example.RestaurantManager.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Restaurant {
     String name;
     Location location;
-    Category category;
+    List<Category> categories;
     Menu menu;
 
-    public Restaurant(String name, Location location, Category category )
+    public Restaurant(String name, Location location, List<Category> categories )
     {
+        this.categories = new ArrayList<>();
         this.name = name;
         this.location = location;
-        this.category = category;
+        this.categories = categories;
         this.menu = new Menu();
     }
 
     public Restaurant(String name, Location location, String category )
     {
+        categories = new ArrayList<>();
         this.name = name;
         this.location = location;
         for (Category aCat: Category.values())
         {
             if (category.equals(aCat.toString()))
             {
-                this.category = aCat;
+                categories.add(aCat);
             }
         }
 
@@ -35,8 +41,15 @@ public class Restaurant {
     {
         JSONObject restaurantObject = new JSONObject();
         restaurantObject.put("Name", name);
-        restaurantObject.put("Location", location.toString());
-        restaurantObject.put("Category", category);
+        restaurantObject.put("Location", location.getJSON());
+        JSONArray catArray = new JSONArray();
+        for (Category category: categories)
+        {
+            catArray.put(category.toString());
+        }
+
+
+        restaurantObject.put("Categories", catArray);
         return restaurantObject;
     }
 
@@ -50,9 +63,9 @@ public class Restaurant {
         return location;
     }
 
-    public Category getCategory()
+    public List<Category> getRestCategories()
     {
-        return category;
+        return categories;
     }
 
     public Menu getMenu()
@@ -70,9 +83,9 @@ public class Restaurant {
         this.location = location;
     }
 
-    public void setCategory(Category category)
+    public void addCategory(Category category)
     {
-        this.category = category;
+        categories.add(category);
     }
 
     public void setMenu(Menu menu)
@@ -105,6 +118,18 @@ public class Restaurant {
             }
         }
         return false;
+    }
+
+    public static List<String> getCategories()
+    {
+        List<String> categories =  new ArrayList<>();
+        Category[] catObjects = Category.values();
+
+        for (Category catObj : catObjects)
+        {
+            categories.add(catObj.toString());
+        }
+        return categories;
     }
 
     public enum Category{Pizza, Fastfood, Steak, Seafood,  Mexican, Chinese, Fuzion, Fine_Dinning};

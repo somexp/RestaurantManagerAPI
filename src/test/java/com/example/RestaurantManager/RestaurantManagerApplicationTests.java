@@ -4,6 +4,9 @@ import com.example.RestaurantManager.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootTest
 class RestaurantManagerApplicationTests {
 
@@ -16,13 +19,16 @@ class RestaurantManagerApplicationTests {
 	{
 
     //public Restaurant(String name, Location location, Restaurant.Category category, Menu menu)
-		Location location = new Location(123, Location.Street.A);
-		Restaurant.Category category = Restaurant.Category.Fine_Dinning;
-		String restaurantId1 = RestaurantContainer.addRestaurant("Top Table", location, category);
+		Location location = new Location("999999 Park Ave", "New York", "New York", "10001");
+		List<Restaurant.Category> categories1 = new ArrayList<>();
+		categories1.add(Restaurant.Category.Fine_Dinning);
+		String restaurantId1 = RestaurantContainer.addRestaurant("Top Table", location, categories1);
 
-		location = new Location(456, Location.Street.D);
-		category = Restaurant.Category.Fastfood;
-		String restaurantId2 = RestaurantContainer.addRestaurant("Trash Land", location, category);
+		location = new Location("666 Dead Dog Avenue", "Sleazy", "Alabama", "36787");
+		List<Restaurant.Category> categories2 = new ArrayList<>();
+		categories2.add(Restaurant.Category.Fastfood);
+		categories2.add(Restaurant.Category.Seafood);
+		String restaurantId2 = RestaurantContainer.addRestaurant("Trash Land", location, categories2);
 
 		for (int i = 0; i < 5; i++) { System.out.println("-----------------------------------------"); }
 
