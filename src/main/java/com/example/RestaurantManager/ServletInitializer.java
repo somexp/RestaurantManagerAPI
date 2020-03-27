@@ -1,5 +1,6 @@
 package com.example.RestaurantManager;
 
+import com.example.RestaurantManager.database.UserDBConnection;
 import com.example.RestaurantManager.model.Location;
 import com.example.RestaurantManager.model.MenuItem;
 import com.example.RestaurantManager.model.Restaurant;
@@ -15,6 +16,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 
+		UserDBConnection userDBConnection = new UserDBConnection();
 		//public Restaurant(String name, Location location, Restaurant.Category category, Menu menu)
 		Location location = new Location("999999 Park Ave", "New York", "New York", "10001");
 		List<Restaurant.Category> categories1 = new ArrayList<>();

@@ -101,4 +101,31 @@ public class RestaurantController {
 
         return "restaurantId";
     }
+
+    @RequestMapping(value="add", method = RequestMethod.POST)
+    public @ResponseBody boolean addRestaurant(@RequestParam("name") String name,
+                                               @RequestParam("categories") String categories,
+                                               @RequestParam("street") String street,
+                                               @RequestParam("city") String city,
+                                               @RequestParam("state") String state,
+                                               @RequestParam("zip") String zip) {
+        if(!Restaurant.validCategory(categories))
+        {
+            return false;
+        }
+
+        //addRestaurant(String name, Location location, Restaurant.Category category)
+        Location location1 = new Location(street, city, state, zip);
+
+        String restaurantId = RestaurantContainer.addRestaurant(name, location1, categories);
+
+        return ((restaurantId!=null)&&(!restaurantId.isEmpty()));
+
+    }
+
+    @RequestMapping(value="delete", method = RequestMethod.GET)
+    public @ResponseBody boolean deleteRestaurant(@RequestParam("restaurantId") String restaurantId) {
+        boolean success = RestaurantContainer.removeRestaurant(restaurantId);
+        return success;
+    }
 }

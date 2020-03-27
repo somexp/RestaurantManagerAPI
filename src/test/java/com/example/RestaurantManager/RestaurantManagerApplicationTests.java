@@ -1,5 +1,6 @@
 package com.example.RestaurantManager;
 
+import com.example.RestaurantManager.database.UserDBConnection;
 import com.example.RestaurantManager.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,21 @@ class RestaurantManagerApplicationTests {
 
 	@Test
 	void contextLoads() {
+	}
+
+	@Test
+	void testDBConnection()
+	{
+		try {
+			UserDBConnection userDBConnection = new UserDBConnection();
+			assert(userDBConnection.testConnect());
+			System.out.println("NO ERRORS IN CONNECTING!!!!");
+		}
+		catch (Throwable t)
+		{
+			t.printStackTrace();
+			assert(false);
+		}
 	}
 
 	@Test
