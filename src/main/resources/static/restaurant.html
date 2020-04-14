@@ -112,7 +112,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:8080/RestaurantManager-0.0.1/restaurant/delete',
+                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/delete',
                 data: { restaurantId: uuid},
                 success: function (data) {
                     console.log("Delete success: " + data);
@@ -128,7 +128,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:8080/RestaurantManager-0.0.1/restaurant/add',
+                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/add',
                 data: { name: name, categories: categories, street: street, city: city, state: state, zip: zip},
                 success: function (data) {
                     console.log("Add success: " + data);
@@ -174,7 +174,7 @@
 
 
     <h1>Add Restaurant</h1>
-    <form action="http://localhost:8080/RestaurantManager-0.0.1/restaurant/add" method="post" id="addRestaurant">
+    <form action="http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/add" method="post" id="addRestaurant">
         <label>Name</label>
         <input type="text" name="name" />
         <label>Category</label>
