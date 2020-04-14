@@ -48,11 +48,11 @@
                     $.each(json, function (key, data) {
                         console.log(key)
                         var restaurant = '';
+                        var name = "";
+                        var cat = "";
+                        var loc = "";
                         $.each(data, function (index, data) {
                             console.log('index', data)
-                            var name = "";
-                            var cat = "";
-                            var loc = "";
                             if (index=="Location")
                             {
                                 var street = "";
@@ -79,7 +79,6 @@
                                     }
                                 })
                                 loc = "   "+street+ ", " + city + ", " + state + ", " + zip;
-                                //restaurant += '<div id='+index+'>'+loc+'</div>';
                             }
                             else if (index=="Name")
                             {
@@ -89,14 +88,10 @@
                             {
                                 cat = data;
                             }
-                            else
-                            {
-                                //restaurant += '<div id='+index+'>'+data+'</div>';
-                            }
-                            restaurant += '<div id=name>'+name+'</div>';
-                            restaurant += '<div id=categories>'+cat+'</div>';
-                            restaurant += '<div id=location>'+loc+'</div>';
                         })
+                        restaurant += '<div id=name>'+name+'</div>';
+                        restaurant += '<div id=categories>'+cat+'</div>';
+                        restaurant += '<div id=location>'+loc+'</div>';
                         restaurant += '<input type = "button" id = "delete" value = "Delete" onClick="deleteRestaurant(\'' + key + '\')"/>'
                         $('#stage').append('<p id='+key+'>' + restaurant + '</p>');
                     })
@@ -176,7 +171,6 @@
     <h1>Restaurants</h1>
 
     <div id = "stage" style = "background-color:cc0;">
-        STAGE
     </div>
 
 

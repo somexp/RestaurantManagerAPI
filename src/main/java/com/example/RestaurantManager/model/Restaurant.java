@@ -1,18 +1,20 @@
 package com.example.RestaurantManager.model;
 
+import com.example.RestaurantManager.database.RestaurantDBConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Restaurant {
     String name;
     Location location;
-    List<Category> categories;
+    List<String> categories;
     Menu menu;
 
-    public Restaurant(String name, Location location, List<Category> categories )
+    public Restaurant(String name, Location location, List<String> categories )
     {
         this.categories = new ArrayList<>();
         this.name = name;
@@ -26,12 +28,9 @@ public class Restaurant {
         categories = new ArrayList<>();
         this.name = name;
         this.location = location;
-        for (Category aCat: Category.values())
+        if (validCategory(category))
         {
-            if (category.equals(aCat.toString()))
-            {
-                categories.add(aCat);
-            }
+            categories.add(category);
         }
 
         this.menu = new Menu();
@@ -43,9 +42,9 @@ public class Restaurant {
         restaurantObject.put("Name", name);
         restaurantObject.put("Location", location.getJSON());
         JSONArray catArray = new JSONArray();
-        for (Category category: categories)
+        for (String category: categories)
         {
-            catArray.put(category.toString());
+            catArray.put(category);
         }
 
 
@@ -63,7 +62,7 @@ public class Restaurant {
         return location;
     }
 
-    public List<Category> getRestCategories()
+    public List<String> getRestCategories()
     {
         return categories;
     }
@@ -83,7 +82,7 @@ public class Restaurant {
         this.location = location;
     }
 
-    public void addCategory(Category category)
+    public void addCategory(String category)
     {
         categories.add(category);
     }
@@ -110,9 +109,11 @@ public class Restaurant {
 
     public static boolean validCategory(String cat)
     {
-        for (Category aCat: Category.values())
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
+        List<String> values = restaurantDBConnection.getCategories();
+        for (String aCat: values)
         {
-            if (cat.equals(aCat.toString()))
+            if (cat.equals(aCat))
             {
                 return true;
             }
@@ -122,14 +123,9 @@ public class Restaurant {
 
     public static List<String> getCategories()
     {
-        List<String> categories =  new ArrayList<>();
-        Category[] catObjects = Category.values();
-
-        for (Category catObj : catObjects)
-        {
-            categories.add(catObj.toString());
-        }
-        return categories;
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
+        List<String> values = restaurantDBConnection.getCategories();
+        return values;
     }
 
     public enum Category{Pizza, Fastfood, Steak, Seafood,  Mexican, Chinese, Fuzion, Fine_Dinning};

@@ -95,7 +95,7 @@ public class RestaurantController {
             return "Category not valid";
         }
 
-        //addRestaurant(String name, Location location, Restaurant.Category category)
+        //addRestaurant(String name, Location location, String category)
         Location location1 = new Location(street, city, state, zipcode);
 
         String restaurantId = RestaurantContainer.addRestaurant(name, location1, category);
@@ -116,7 +116,7 @@ public class RestaurantController {
             return false;
         }
 
-        //addRestaurant(String name, Location location, Restaurant.Category category)
+        //addRestaurant(String name, Location location, String category)
         Location location1 = new Location(street, city, state, zip);
 
         String restaurantId = RestaurantContainer.addRestaurant(name, location1, categories);

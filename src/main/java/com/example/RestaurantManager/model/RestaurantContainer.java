@@ -12,8 +12,15 @@ public class RestaurantContainer {
 
     private static Map<String, Restaurant> restaurantMap = new HashMap<>();
 
-    public static String addRestaurant(String name, Location location, List<Restaurant.Category> categories)
+    public static String addRestaurant(String name, Location location, List<String> categories)
     {
+        for (String cat : categories)
+        {
+            if (!Restaurant.validCategory(cat))
+            {
+                return ("Invalid Category: " + cat);
+            }
+        }
         Restaurant restaurant = new Restaurant(name, location, categories);
 
         String restaurantId = UUID.randomUUID().toString();

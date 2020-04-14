@@ -17,16 +17,16 @@ public class ServletInitializer extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 
 		UserDBConnection userDBConnection = new UserDBConnection();
-		//public Restaurant(String name, Location location, Restaurant.Category category, Menu menu)
+		//public Restaurant(String name, Location location, String category, Menu menu)
 		Location location = new Location("999999 Park Ave", "New York", "New York", "10001");
-		List<Restaurant.Category> categories1 = new ArrayList<>();
-		categories1.add(Restaurant.Category.Fine_Dinning);
+		List<String> categories1 = new ArrayList<>();
+		categories1.add("Fine_Dinning");
 		String restaurantId1 = RestaurantContainer.addRestaurant("Top Table", location, categories1);
 
 		location = new Location("666 Dead Dog Avenue", "Sleazy", "Alabama", "36787");
-		List<Restaurant.Category> categories2 = new ArrayList<>();
-		categories2.add(Restaurant.Category.Fastfood);
-		categories2.add(Restaurant.Category.Seafood);
+		List<String> categories2 = new ArrayList<>();
+		categories2.add("Fastfood");
+		categories2.add("Seafood");
 		String restaurantId2 = RestaurantContainer.addRestaurant("Trash Land", location, categories2);
 
 
