@@ -10,7 +10,7 @@
          $(document).ready(function () {
             $.ajax({
                 type: 'GET',
-                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/list',
+                url: 'http://localhost:8080/RestaurantManager-0.0.1/restaurant/list',
                 success: function (data) {
                     var json = $.parseJSON(data);
 
@@ -87,11 +87,12 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/delete',
+                url: 'http://localhost:8080/RestaurantManager-0.0.1/restaurant/delete',
                 data: { restaurantId: uuid},
                 success: function (data) {
                     console.log("Delete success: " + data);
                     location.reload(true);
+                    console.log("Delete success: " + data);
                 }
                 });
         }
@@ -102,7 +103,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/add',
+                url: 'http://localhost:8080/RestaurantManager-0.0.1/restaurant/add',
                 data: { name: name, categories: categories, street: street, city: city, state: state, zip: zip},
                 success: function (data) {
                     console.log("Add success: " + data);
@@ -112,14 +113,29 @@
         }
     </script>
     <script type = "text/javascript" language = "javascript">
-        $("#addRestaurant").submit(function(event){
-            event.preventDefault();
-            var post_url = $(this).attr("action");
-	        var form_data = new FormData(this);
-            $.post( post_url, form_data, function( response ) {
-	            console.log("Add success: " + data);
-                location.reload(true);
-	        });
+        $(function() {
+            $('#addRestaurant').submit(function(event){
+                console.log("in addRestaurant");
+                event.preventDefault(); //prevent default action
+                var post_url = $(this).attr("action"); //get form action url
+                //var post_url = "http://98.169.215.63:8080/RestaurantManager-0.0.1/restaurant/add";
+                var request_method = $(this).attr("method"); //get form GET/POST method
+	            var form_data = new FormData(this); //Creates new FormData object
+                $.ajax({
+                    url : post_url,
+                    headers:{
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    type: request_method,
+                    data : form_data,
+		            contentType: false,
+		            cache: false,
+		            processData:false
+                }).done(function(response){
+                    location.reload(true);
+                    //$("#server-results").html(response);
+                });
+            });
         });
     </script>
     <meta charset="UTF-8">
@@ -134,7 +150,7 @@
 
 
     <h1>Add Restaurant</h1>
-    <form action="http://3.88.210.26:8080/RestaurantManager-0.0.1/restaurant/add" method="post" id="addRestaurant">
+    <form action="http://localhost:8080/RestaurantManager-0.0.1/restaurant/add" method="post" id="addRestaurant">
         <label>Name</label>
         <input type="text" name="name" />
         <label>Category</label>

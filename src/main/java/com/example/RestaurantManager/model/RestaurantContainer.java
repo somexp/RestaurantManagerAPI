@@ -82,12 +82,16 @@ public class RestaurantContainer {
 
     public static boolean removeRestaurant(String uuid)
     {
+        System.out.println("11111111111: " + uuid);
         if (!restaurantMap.containsKey(uuid))
         {
+            System.out.println("2222222222222222222");
             return false;
         }
+        System.out.println("3333333333333333");
 
         restaurantMap.remove(uuid);
+        System.out.println("44444444444444");
 
         return true;
     }

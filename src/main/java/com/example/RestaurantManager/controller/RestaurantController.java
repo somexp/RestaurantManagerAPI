@@ -22,7 +22,7 @@ public class RestaurantController {
 
     String SUCCESS_RESPONSE = "success";
 
-
+    //@CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseEntity<String> listRestaurants() {
 
@@ -40,7 +40,7 @@ public class RestaurantController {
 
         return new ResponseEntity(restaurants, HttpStatus.OK);
     }
-
+    //@CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value = "/{restaurantId}", method = RequestMethod.GET)
     public ResponseEntity<String> getRestaurant(@PathVariable("restaurantId") String restaurantId) {
 
@@ -60,7 +60,7 @@ public class RestaurantController {
     }
 
 
-
+    //@CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity<String> getCategories() {
 
@@ -86,6 +86,7 @@ public class RestaurantController {
     }
 
 
+    //@CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/addRestaurant")
     public String processForm(String name, String street, String city, String state, String zipcode, String category) {
 
@@ -102,6 +103,7 @@ public class RestaurantController {
         return "restaurantId";
     }
 
+    //@CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value="add", method = RequestMethod.POST)
     public @ResponseBody boolean addRestaurant(@RequestParam("name") String name,
                                                @RequestParam("categories") String categories,
@@ -123,6 +125,7 @@ public class RestaurantController {
 
     }
 
+    //@CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value="delete", method = RequestMethod.GET)
     public @ResponseBody boolean deleteRestaurant(@RequestParam("restaurantId") String restaurantId) {
         boolean success = RestaurantContainer.removeRestaurant(restaurantId);

@@ -22,8 +22,7 @@ public class MenuController {
 
     String SUCCESS_RESPONSE = "success";
 
-
-
+    @CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value = "/{restaurantId}", method = RequestMethod.GET)
     public ResponseEntity<String> getMenu(@PathVariable("restaurantId") String restaurantId) {
 
@@ -43,6 +42,7 @@ public class MenuController {
     }
 
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @RequestMapping(value = "/{restaurantId}/{menuItemId}", method = RequestMethod.GET)
     public ResponseEntity<String> getMenuItem(@PathVariable("menuId") String menuId,
                                               @PathVariable("menuItemId") String menuItemId) {
@@ -62,6 +62,7 @@ public class MenuController {
         return new ResponseEntity(menuItem, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @PostMapping("/addMenuItem")
     public String addItem(String restaurantId, String name, String description, String price) {
 
