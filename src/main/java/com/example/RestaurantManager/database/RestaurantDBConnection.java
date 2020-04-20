@@ -1,5 +1,7 @@
 package com.example.RestaurantManager.database;
 
+import com.example.RestaurantManager.model.Location;
+import com.example.RestaurantManager.model.Restaurant;
 import com.example.RestaurantManager.services.PropertiesService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +56,186 @@ public class RestaurantDBConnection {
         }
         return categories;
     }
+
+
+    public int getCategoryId(String name)
+    {
+        List<String> categories =  new ArrayList<String>();
+        try {
+            // Setup the connection with the DB
+            connect = DriverManager
+                    .getConnection(url, username, password);
+
+            preparedStatement = connect
+                    .prepareStatement("select * from restaurant_category where name = ?");
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            connect.close();
+            if (resultSet.next())
+            {
+                int id = resultSet.getInt(1);
+                return id;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        catch (SQLException e) {
+            log.fatal(e.getMessage());
+            return -1;
+        }
+    }
+
+
+
+    public int addRestaurant(String name, String street, String city, String state, String zipcode, int owner, List<String> categories) throws IllegalArgumentException
+    {
+        List<Integer> categoryIds = new ArrayList<>();
+        try {
+            for (String categoryName: categories)
+            {
+                int categoryId = getCategoryId(categoryName);
+                if (categoryId>=0) {
+                    categoryIds.add(categoryId);
+                }
+            }
+
+
+            // Setup the connection with the DB
+            connect = DriverManager
+                    .getConnection(url, username, password);
+
+            preparedStatement = connect
+                    .prepareStatement("select nextId from next_id where tableName = ?");
+            preparedStatement.setString(1,"restaurant");
+            ResultSet rs = preparedStatement.executeQuery();
+            int nextId = 0;
+            if(rs.next())
+            {
+                nextId = rs.getInt(1);
+            }
+            else
+            {
+                throw new IllegalArgumentException("No next id");
+            }
+
+
+            preparedStatement = connect
+                    .prepareStatement("insert into restaurant (id, name, street, city, state, zipcode, owner) values(?, ?, ?, ?, ?, ?, ?)");
+            preparedStatement.setInt(1, nextId);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, street);
+            preparedStatement.setString(4, city);
+            preparedStatement.setString(5, state);
+            preparedStatement.setString(6, zipcode);
+            preparedStatement.setInt(7, owner);
+            int result = preparedStatement.executeUpdate();
+
+            if (result!=1)
+            {
+                log.debug("failed insert");
+            }
+
+            PreparedStatement check = connect.prepareCall("select * from restaurant where id = ?");
+
+            check.setInt(1, nextId);
+
+            ResultSet idResSet = check.executeQuery();
+
+            if(idResSet.next())
+            {
+                for (int categoryId: categoryIds) {
+                    preparedStatement = connect
+                            .prepareStatement("insert into category_lookup (restaurantId, categoryId) values(?, ?)");
+                    preparedStatement.setInt(1, nextId);
+                    preparedStatement.setInt(2, categoryId);
+                    preparedStatement.executeUpdate();
+                }
+                preparedStatement = connect
+                        .prepareStatement("select categoryId from category_lookup where restaurantId = ?");
+                preparedStatement.setInt(1, nextId);
+                ResultSet catRestSet = preparedStatement.executeQuery();
+                while (catRestSet.next())
+                {
+                    System.out.println("Added category id: " + catRestSet.getInt(1));
+                }
+                connect.close();
+                return nextId;
+            }
+            else
+            {
+                connect.close();
+                return -1;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            log.fatal(e.getMessage());
+        }
+        return -1;
+    }
+
+
+
+    public Restaurant getRestaurant(int id) throws IllegalArgumentException, SQLException
+    {
+
+
+
+        String name = "";
+        String street = "";
+        String city = "";
+        String state = "";
+        String zipcode = "";
+        List<String> categories =  new ArrayList<>();
+
+        try {
+            // Setup the connection with the DB
+            connect = DriverManager
+                    .getConnection(url, username, password);
+
+            preparedStatement = connect
+                    .prepareStatement("select * from restaurant where id = ?");
+            preparedStatement.setInt(1,id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            connect.close();
+
+            if(rs.next())
+            {
+                name = rs.getString(2);
+                street = rs.getString(3);
+                name = rs.getString(4);
+                name = rs.getString(5);
+                name = rs.getString(6);
+
+            }
+            else
+            {
+                throw new IllegalArgumentException("Restaurant not found");
+            }
+
+            preparedStatement = connect
+                    .prepareStatement("select rc.name from restaurant_category rc and category_lookup cl where cl.restaurantId = ? and cl.categoryId = rc.id");
+            preparedStatement.setInt(1, id);
+            rs = preparedStatement.executeQuery();
+            while (rs.next())
+            {
+                String catName = rs.getString(1);
+                categories.add(catName);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            log.fatal(e.getMessage());
+            throw e;
+        }
+        Location location = new Location(street, city, state, zipcode);
+        Restaurant restaurant = new Restaurant(name, location, categories);
+        return restaurant;
+    }
+
 
     public boolean testConnect() throws Exception
     {

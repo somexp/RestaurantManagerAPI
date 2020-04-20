@@ -88,7 +88,7 @@
         <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
                    maxThreads="150" SSLEnabled="true">
             <SSLHostConfig>
-                <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
+                <Certificate certificateKeystoreFile="conf/3.88.210.26-rsa.jks"
                              type="RSA" />
             </SSLHostConfig>
         </Connector>
@@ -104,9 +104,9 @@
                    maxThreads="150" SSLEnabled="true" >
             <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
             <SSLHostConfig>
-                <Certificate certificateKeyFile="conf/localhost-rsa-key.pem"
-                             certificateFile="conf/localhost-rsa-cert.pem"
-                             certificateChainFile="conf/localhost-rsa-chain.pem"
+                <Certificate certificateKeyFile="conf/3.88.210.26-rsa-key.pem"
+                             certificateFile="conf/3.88.210.26-rsa-cert.pem"
+                             certificateChainFile="conf/3.88.210.26-rsa-chain.pem"
                              type="RSA" />
             </SSLHostConfig>
         </Connector>
@@ -127,9 +127,9 @@
              Documentation at /docs/config/engine.html -->
 
         <!-- You should set jvmRoute to support load-balancing via AJP ie :
-        <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">
+        <Engine name="Catalina" defaultHost="3.88.210.26" jvmRoute="jvm1">
         -->
-        <Engine name="Catalina" defaultHost="localhost">
+        <Engine name="Catalina" defaultHost="3.88.210.26">
 
             <!--For clustering, please take a look at documentation at:
                 /docs/cluster-howto.html  (simple how to)
@@ -149,7 +149,7 @@
                        resourceName="UserDatabase"/>
             </Realm>
 
-            <Host name="localhost"  appBase="webapps"
+            <Host name="3.88.210.26"  appBase="webapps"
                   unpackWARs="true" autoDeploy="true">
 
                 <Context path="/RestaurantManager" docBase="RestaurantManager-0.0.1.war"/>
@@ -165,7 +165,7 @@
                  Documentation at: /docs/config/valve.html
                  Note: The pattern used is equivalent to using pattern="common" -->
             <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-                   prefix="localhost_access_log" suffix=".txt"
+                   prefix="3.88.210.26_access_log" suffix=".txt"
                    pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
         </Host>

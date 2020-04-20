@@ -1,10 +1,8 @@
 package com.example.RestaurantManager.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+import com.example.RestaurantManager.database.RestaurantDBConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -32,8 +30,17 @@ public class RestaurantContainer {
     {
         Restaurant restaurant = new Restaurant(name, location, category);
 
-        String restaurantId = UUID.randomUUID().toString();
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
+
+        List<String> categories = new ArrayList<>();
+        categories.add(category);
+
+        int id = restaurantDBConnection.addRestaurant(name, location.getStreet(), location.getCity(), location.getState(), location.getZipcode(), 0, categories);
+
+        String restaurantId = String.valueOf(id);
+
         restaurantMap.put(restaurantId, restaurant);
+
         return restaurantId;
     }
 

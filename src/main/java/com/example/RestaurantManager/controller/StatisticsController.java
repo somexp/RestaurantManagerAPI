@@ -15,7 +15,7 @@ public class StatisticsController {
 
     String SUCCESS_RESPONSE = "success";
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "http://3.88.210.26:8080")
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<String> getStatistics() {
 
