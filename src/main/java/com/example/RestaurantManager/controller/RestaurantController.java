@@ -79,24 +79,6 @@ public class RestaurantController {
         return new ResponseEntity(categories, HttpStatus.OK);
     }
 
-
-    //@CrossOrigin(origins = "http://3.88.210.26:8080")
-    @PostMapping("/addRestaurant")
-    public String processForm(String name, String street, String city, String state, String zipcode, String category) {
-
-        if(!Restaurant.validCategory(category))
-        {
-            return "Category not valid";
-        }
-
-        //addRestaurant(String name, Location location, String category)
-        Location location1 = new Location(street, city, state, zipcode);
-
-        String restaurantId = RestaurantContainer.addRestaurant(name, location1, category);
-
-        return "restaurantId";
-    }
-
     //@CrossOrigin(origins = "http://3.88.210.26:8080")
     @RequestMapping(value="add", method = RequestMethod.POST)
     public @ResponseBody boolean addRestaurant(@RequestParam("name") String name,

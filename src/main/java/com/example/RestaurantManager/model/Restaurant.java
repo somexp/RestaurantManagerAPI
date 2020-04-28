@@ -12,7 +12,6 @@ public class Restaurant {
     String name;
     Location location;
     List<String> categories;
-    Menu menu;
 
     public Restaurant(String name, Location location, List<String> categories )
     {
@@ -20,7 +19,6 @@ public class Restaurant {
         this.name = name;
         this.location = location;
         this.categories = categories;
-        this.menu = new Menu();
     }
 
     public Restaurant(String name, Location location, String category )
@@ -32,8 +30,6 @@ public class Restaurant {
         {
             categories.add(category);
         }
-
-        this.menu = new Menu();
     }
 
     public JSONObject getRestaurantJSON()
@@ -67,11 +63,6 @@ public class Restaurant {
         return categories;
     }
 
-    public Menu getMenu()
-    {
-        return menu;
-    }
-
     public void setName(String name)
     {
         this.name = name;
@@ -87,24 +78,12 @@ public class Restaurant {
         categories.add(category);
     }
 
-    public void setMenu(Menu menu)
+    public void addCategories(List<String> categories)
     {
-        this.menu = menu;
-    }
-
-    public String addMenuItem(MenuItem menuItem)
-    {
-        return menu.addItem(menuItem);
-    }
-
-    public boolean removeMenuItem(String key)
-    {
-        return menu.removeItem(key);
-    }
-
-    public String removeMenuItem(MenuItem menuItem)
-    {
-        return menu.removeItem(menuItem);
+        for (String category: categories)
+        {
+            categories.add(category);
+        }
     }
 
     public static boolean validCategory(String cat)

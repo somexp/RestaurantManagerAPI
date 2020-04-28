@@ -2,6 +2,7 @@ package com.example.RestaurantManager;
 
 import com.example.RestaurantManager.database.UserDBConnection;
 import com.example.RestaurantManager.model.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -14,6 +15,7 @@ class RestaurantManagerApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+
 
 	@Test
 	void testDBConnection()
@@ -40,11 +42,15 @@ class RestaurantManagerApplicationTests {
 		categories1.add("Fine_Dinning");
 		String restaurantId1 = RestaurantContainer.addRestaurant("Top Table", location, categories1);
 
+		System.out.println("After Add restaurantID1: " + restaurantId1);
+
 		location = new Location("666 Dead Dog Avenue", "Sleazy", "Alabama", "36787");
 		List<String> categories2 = new ArrayList<>();
 		categories2.add("Fastfood");
 		categories2.add("Seafood");
 		String restaurantId2 = RestaurantContainer.addRestaurant("Trash Land", location, categories2);
+
+		System.out.println("After Add restaurantID2: " + restaurantId2);
 
 		for (int i = 0; i < 5; i++) { System.out.println("-----------------------------------------"); }
 
@@ -75,6 +81,10 @@ class RestaurantManagerApplicationTests {
 		System.out.println(RestaurantContainer.getMenuItemJSON(restaurantId2, item22Id));
 		for (int i = 0; i < 5; i++) { System.out.println("-----------------------------------------"); }
 
+		System.out.println("restaurantID: " + restaurantId1);
+		System.out.println("restaurantID: " + restaurantId2);
+		assert(RestaurantContainer.removeRestaurant(restaurantId1));
+		assert(RestaurantContainer.removeRestaurant(restaurantId2));
 	}
 
 }

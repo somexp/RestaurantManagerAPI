@@ -8,7 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RestaurantDBConnection {
 
@@ -67,17 +69,18 @@ public class RestaurantDBConnection {
                     .getConnection(url, username, password);
 
             preparedStatement = connect
-                    .prepareStatement("select * from restaurant_category where name = ?");
+                    .prepareStatement("select id from restaurant_category where name = ?");
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
-            connect.close();
             if (resultSet.next())
             {
                 int id = resultSet.getInt(1);
+                connect.close();
                 return id;
             }
             else
             {
+                connect.close();
                 return -1;
             }
         }
@@ -89,13 +92,16 @@ public class RestaurantDBConnection {
 
 
 
-    public int addRestaurant(String name, String street, String city, String state, String zipcode, int owner, List<String> categories) throws IllegalArgumentException
+    public int addRestaurant(String name, String street, String city,
+                             String state, String zipcode, int owner,
+                             List<String> categories) throws IllegalArgumentException
     {
         List<Integer> categoryIds = new ArrayList<>();
         try {
             for (String categoryName: categories)
             {
                 int categoryId = getCategoryId(categoryName);
+
                 if (categoryId>=0) {
                     categoryIds.add(categoryId);
                 }
@@ -106,30 +112,15 @@ public class RestaurantDBConnection {
             connect = DriverManager
                     .getConnection(url, username, password);
 
-            preparedStatement = connect
-                    .prepareStatement("select nextId from next_id where tableName = ?");
-            preparedStatement.setString(1,"restaurant");
-            ResultSet rs = preparedStatement.executeQuery();
-            int nextId = 0;
-            if(rs.next())
-            {
-                nextId = rs.getInt(1);
-            }
-            else
-            {
-                throw new IllegalArgumentException("No next id");
-            }
-
 
             preparedStatement = connect
-                    .prepareStatement("insert into restaurant (id, name, street, city, state, zipcode, owner) values(?, ?, ?, ?, ?, ?, ?)");
-            preparedStatement.setInt(1, nextId);
-            preparedStatement.setString(2, name);
-            preparedStatement.setString(3, street);
-            preparedStatement.setString(4, city);
-            preparedStatement.setString(5, state);
-            preparedStatement.setString(6, zipcode);
-            preparedStatement.setInt(7, owner);
+                    .prepareStatement("insert into restaurant (name, street, city, state, zipcode, owner) values(?, ?, ?, ?, ?, ?)");
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, street);
+            preparedStatement.setString(3, city);
+            preparedStatement.setString(4, state);
+            preparedStatement.setString(5, zipcode);
+            preparedStatement.setInt(6, owner);
             int result = preparedStatement.executeUpdate();
 
             if (result!=1)
@@ -137,14 +128,14 @@ public class RestaurantDBConnection {
                 log.debug("failed insert");
             }
 
-            PreparedStatement check = connect.prepareCall("select * from restaurant where id = ?");
 
-            check.setInt(1, nextId);
+            PreparedStatement check = connect.prepareCall("SELECT LAST_INSERT_ID();");
 
             ResultSet idResSet = check.executeQuery();
 
             if(idResSet.next())
             {
+                int nextId = idResSet.getInt(1);
                 for (int categoryId: categoryIds) {
                     preparedStatement = connect
                             .prepareStatement("insert into category_lookup (restaurantId, categoryId) values(?, ?)");
@@ -176,12 +167,124 @@ public class RestaurantDBConnection {
         return -1;
     }
 
-
-
-    public Restaurant getRestaurant(int id) throws IllegalArgumentException, SQLException
+    public boolean deleteRestaurant(int restaurantId) throws IllegalArgumentException
     {
+        try {
+            // Setup the connection with the DB
+            connect = DriverManager
+                    .getConnection(url, username, password);
+            preparedStatement = connect
+                    .prepareStatement("delete from category_lookup where restaurantId = ?");
+
+            preparedStatement.setInt(1,restaurantId);
+            int result = preparedStatement.executeUpdate();
 
 
+            preparedStatement = connect
+                    .prepareStatement("delete from restaurant where id = ?");
+            preparedStatement.setInt(1,restaurantId);
+            result = preparedStatement.executeUpdate();
+
+            preparedStatement = connect
+                    .prepareStatement("select categoryId from category_lookup where restaurantId = ?");
+            preparedStatement.setInt(1,restaurantId);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+            {
+                return false;
+            }
+
+
+            preparedStatement = connect
+                    .prepareStatement("select name from restaurant where id = ?");
+            preparedStatement.setInt(1,restaurantId);
+            rs = preparedStatement.executeQuery();
+            if (rs.next())
+            {
+                return false;
+            }
+
+            return true;
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            log.fatal(e.getMessage());
+            return false;
+        }
+    }
+
+
+    public Restaurant getRestaurant(String id) throws IllegalArgumentException, SQLException
+    {
+        // Setup the connection with the DB
+        connect = DriverManager
+                .getConnection(url, username, password);
+
+        int idInt = Integer.valueOf(id);
+        String name = "";
+        String street = "";
+        String city = "";
+        String state = "";
+        String zipcode = "";
+        List<String> categories =  new ArrayList<>();
+
+        try {
+
+            preparedStatement = connect
+                    .prepareStatement("select * from restaurant where id = ?");
+            preparedStatement.setInt(1, idInt);;
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if(rs.next())
+            {
+                String idString = String.valueOf(id);
+                name = rs.getString(2);
+                street = rs.getString(3);
+                city = rs.getString(4);
+                state = rs.getString(5);
+                zipcode = rs.getString(6);
+
+                PreparedStatement preparedStatement2 = connect
+                        .prepareStatement("select rc.name from restaurant_category rc and category_lookup cl where cl.restaurantId = ? and cl.categoryId = rc.id");
+                preparedStatement2.setInt(1, idInt);
+                ResultSet rs2 = preparedStatement2.executeQuery();
+                while(rs2.next())
+                {
+                    categories.add(rs2.getString(1));
+                }
+
+                Location location = new Location(street, city, state, zipcode);
+                Restaurant restaurant = new Restaurant(name, location, categories);
+                connect.close();
+                return restaurant;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            log.fatal(e.getMessage());
+            throw e;
+        }
+        finally
+        {
+            connect.close();
+        }
+    }
+
+
+    public Map<String, Restaurant> getRestaurants() throws SQLException
+    {
+        HashMap<String, Restaurant> restaurantsMap = new HashMap<String, Restaurant>();
+
+        // Setup the connection with the DB
+        connect = DriverManager
+                .getConnection(url, username, password);
 
         String name = "";
         String street = "";
@@ -191,39 +294,34 @@ public class RestaurantDBConnection {
         List<String> categories =  new ArrayList<>();
 
         try {
-            // Setup the connection with the DB
-            connect = DriverManager
-                    .getConnection(url, username, password);
 
             preparedStatement = connect
-                    .prepareStatement("select * from restaurant where id = ?");
-            preparedStatement.setInt(1,id);
+                    .prepareStatement("select * from restaurant");
+
             ResultSet rs = preparedStatement.executeQuery();
 
-            connect.close();
-
-            if(rs.next())
+            while(rs.next())
             {
+                int id = rs.getInt(1);
+                String idString = String.valueOf(id);
                 name = rs.getString(2);
                 street = rs.getString(3);
-                name = rs.getString(4);
-                name = rs.getString(5);
-                name = rs.getString(6);
+                city = rs.getString(4);
+                state = rs.getString(5);
+                zipcode = rs.getString(6);
 
-            }
-            else
-            {
-                throw new IllegalArgumentException("Restaurant not found");
-            }
+                PreparedStatement preparedStatement2 = connect
+                        .prepareStatement("select rc.name from restaurant_category rc, category_lookup cl where cl.restaurantId = ? and cl.categoryId = rc.id");
+                preparedStatement2.setInt(1, id);
+                ResultSet rs2 = preparedStatement2.executeQuery();
+                while(rs2.next())
+                {
+                    categories.add(rs2.getString(1));
+                }
 
-            preparedStatement = connect
-                    .prepareStatement("select rc.name from restaurant_category rc and category_lookup cl where cl.restaurantId = ? and cl.categoryId = rc.id");
-            preparedStatement.setInt(1, id);
-            rs = preparedStatement.executeQuery();
-            while (rs.next())
-            {
-                String catName = rs.getString(1);
-                categories.add(catName);
+                Location location = new Location(street, city, state, zipcode);
+                Restaurant restaurant = new Restaurant(name, location, categories);
+                restaurantsMap.put(idString, restaurant);
             }
         }
         catch (SQLException e) {
@@ -231,9 +329,11 @@ public class RestaurantDBConnection {
             log.fatal(e.getMessage());
             throw e;
         }
-        Location location = new Location(street, city, state, zipcode);
-        Restaurant restaurant = new Restaurant(name, location, categories);
-        return restaurant;
+        finally
+        {
+            connect.close();
+        }
+        return restaurantsMap;
     }
 
 
@@ -245,7 +345,6 @@ public class RestaurantDBConnection {
         }
         catch (Throwable t)
         {
-            System.out.println("FAILED TO CONNECT!!!!");
             t.printStackTrace();
             return false;
         }
@@ -467,7 +566,6 @@ public class RestaurantDBConnection {
                 String stored = resultSet.getString(1);
                 connect.close();
 
-                System.out.println("Check " + pass + " against " + stored);
                 //return SecureHash.validatePassword(pass, stored);
                 return true;
             }

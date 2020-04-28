@@ -1,7 +1,9 @@
 package com.example.RestaurantManager.model;
 
+import java.sql.SQLException;
 import java.util.*;
 
+import com.example.RestaurantManager.database.MenuDBConnection;
 import com.example.RestaurantManager.database.RestaurantDBConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,8 +23,14 @@ public class RestaurantContainer {
         }
         Restaurant restaurant = new Restaurant(name, location, categories);
 
-        String restaurantId = UUID.randomUUID().toString();
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
+
+        int id = restaurantDBConnection.addRestaurant(name, location.getStreet(), location.getCity(), location.getState(), location.getZipcode(), 0, categories);
+
+        String restaurantId = String.valueOf(id);
+
         restaurantMap.put(restaurantId, restaurant);
+
         return restaurantId;
     }
 
@@ -46,41 +54,81 @@ public class RestaurantContainer {
 
     public static JSONObject getRestaurantsJSON()
     {
-        JSONObject it = new JSONObject();
-        for (String key : restaurantMap.keySet())
-        {
-            Restaurant restaurant = restaurantMap.get(key);
-            JSONObject restaurantObj = restaurant.getRestaurantJSON();
-            it.put(key, restaurantObj);
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
+        try {
+            restaurantMap = restaurantDBConnection.getRestaurants();
+            JSONObject it = new JSONObject();
+            for (String key : restaurantMap.keySet()) {
+                Restaurant restaurant = restaurantMap.get(key);
+                JSONObject restaurantObj = restaurant.getRestaurantJSON();
+                it.put(key, restaurantObj);
+            }
+            return it;
         }
-        return it;
+        catch(SQLException sqle)
+        {
+            sqle.printStackTrace();
+            return null;
+        }
     }
 
-    public static JSONObject getRestaurantJSON(String uuid)
+    public static JSONObject getRestaurantJSON(String id)
     {
-        Restaurant restaurant = restaurantMap.get(uuid);
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
+        try
+        {
+            restaurantMap = restaurantDBConnection.getRestaurants();
+            JSONObject it = new JSONObject();
 
-        return restaurant.getRestaurantJSON();
+            Restaurant restaurant = restaurantDBConnection.getRestaurant(id);
+            //Restaurant restaurant = restaurantMap.get(uuid);
+            JSONObject restaurantObj = restaurant.getRestaurantJSON();
+            return restaurantObj;
+        }
+        catch(SQLException sqle)
+        {
+            sqle.printStackTrace();
+            return null;
+        }
     }
 
     public static JSONObject getMenuJSON(String restaurantId)
     {
-        Restaurant restaurant = restaurantMap.get(restaurantId);
-
-        Menu menu = restaurant.getMenu();
-
-        return menu.getMenuJSON();
+        MenuDBConnection menuDBConnection = new MenuDBConnection();
+        try
+        {
+            Menu menu = menuDBConnection.getMenu(restaurantId);
+            //Restaurant restaurant = restaurantMap.get(uuid);
+            JSONObject menuJSON = menu.getMenuJSON();
+            return menuJSON;
+        }
+        catch(SQLException sqle)
+        {
+            sqle.printStackTrace();
+            return null;
+        }
     }
 
     public static JSONObject getMenuItemJSON(String restaurantId, String menuItemId)
     {
-        Restaurant restaurant = restaurantMap.get(restaurantId);
+        MenuDBConnection menuDBConnection = new MenuDBConnection();
+        try
+        {
+            MenuItem menuItem = menuDBConnection.getMenuItem(menuItemId, restaurantId);
 
-        Menu menu = restaurant.getMenu();
-
-        MenuItem menuItem = menu.getItem(menuItemId);
-
-        return menuItem.getMenuItemJSON();
+            if (menuItem==null)
+            {
+                return new JSONObject();
+            }
+            //Restaurant restaurant = restaurantMap.get(uuid);
+            JSONObject menuItemJSON = menuItem.getMenuItemJSON();
+            return menuItemJSON;
+        }
+        catch(SQLException sqle)
+        {
+            sqle.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -94,58 +142,60 @@ public class RestaurantContainer {
         return restaurantMap.get(uuid);
     }
 
-    public static boolean removeRestaurant(String uuid)
+    public static boolean removeRestaurant(String id)
     {
-        System.out.println("11111111111: " + uuid);
-        if (!restaurantMap.containsKey(uuid))
+        if (!restaurantMap.containsKey(id))
         {
-            System.out.println("2222222222222222222");
             return false;
         }
-        System.out.println("3333333333333333");
 
-        restaurantMap.remove(uuid);
-        System.out.println("44444444444444");
+        RestaurantDBConnection restaurantDBConnection = new RestaurantDBConnection();
 
-        return true;
-    }
+        Integer idInt = Integer.valueOf(id);
 
-    public static String removeRestaurant(Restaurant restaurant)
-    {
-        for(String key : restaurantMap.keySet())
+        if(restaurantDBConnection.deleteRestaurant(idInt))
         {
-            if (restaurant.equals(restaurantMap.get(key)))
-            {
-                restaurantMap.remove(key);
-                return key;
-            }
+            restaurantMap.remove(id);
+            return true;
         }
-
-        return "Not Found";
+        else
+        {
+            return false;
+        }
     }
 
     public static String addMenuItem(String restaurantId, MenuItem menuItem)
     {
-        if (!restaurantMap.containsKey(restaurantId))
+        MenuDBConnection menuDBConnection = new MenuDBConnection();
+        try
         {
-            return "Not Found";
+            int itemId = menuDBConnection.addMenuItem(restaurantId, menuItem.getName(),
+                    menuItem.getDescription(), menuItem.getPrice());
+            //Restaurant restaurant = restaurantMap.get(uuid);
+            String idString = String.valueOf(itemId);
+            return idString;
         }
-        Restaurant restaurant = restaurantMap.get(restaurantId);
-        String menuItemId = restaurant.addMenuItem(menuItem);
-        restaurantMap.put(restaurantId, restaurant);
-        return menuItemId;
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static boolean removeMenuItem(String restaurantId, String menuItemId)
     {
-        if (!restaurantMap.containsKey(restaurantId))
+        MenuDBConnection menuDBConnection = new MenuDBConnection();
+        try
         {
+            boolean success = menuDBConnection.deleteMenuItem(restaurantId, menuItemId);
+            //Restaurant restaurant = restaurantMap.get(uuid);
+            return success;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
             return false;
         }
-
-        Restaurant restaurant = restaurantMap.get(restaurantId);
-
-        return restaurant.removeMenuItem(menuItemId);
     }
 
 

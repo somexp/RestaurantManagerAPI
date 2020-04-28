@@ -30,6 +30,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="statistics.html">Statistics</a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="orders.html">Orders</a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -41,7 +44,7 @@
          $(document).ready(function () {
             $.ajax({
                 type: 'GET',
-                url: 'http://98.169.215.63:8080/RestaurantManager-0.0.1/statistics/',
+                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/statistics/',
                 success: function (data) {
                     var jsonData = $.parseJSON(data);
 

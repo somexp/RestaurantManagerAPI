@@ -11,11 +11,10 @@ public class Menu {
     {
     }
 
-    public String addItem(MenuItem menuItem)
+    public String addItem(String id, MenuItem menuItem)
     {
-        String uuid = UUID.randomUUID().toString();
-        menuList.put(uuid, menuItem);
-        return uuid;
+        menuList.put(id, menuItem);
+        return id;
     }
 
     public JSONObject getMenuJSON()
@@ -31,19 +30,19 @@ public class Menu {
         return menuObj;
     }
 
-    public MenuItem getItem(String uuid)
+    public MenuItem getItem(String id)
     {
-        return menuList.get(uuid);
+        return menuList.get(id);
     }
 
-    public boolean removeItem(String uuid)
+    public boolean removeItem(String id)
     {
-        if (!menuList.containsKey(uuid))
+        if (!menuList.containsKey(id))
         {
             return false;
         }
 
-        menuList.remove(uuid);
+        menuList.remove(id);
 
         return true;
     }

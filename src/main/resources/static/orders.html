@@ -1,15 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Users</title>
+    <title>Pending Orders</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="  crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <!--<script type = "text/javascript"
-            src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
-    </script>-->
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <a class="navbar-brand" href="#">
@@ -39,41 +36,54 @@
             </ul>
         </div>
     </nav>
+    <!--<script type = "text/javascript"
+            src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+    </script>-->
 
     <script type = "text/javascript" language = "javascript">
-         $(document).ready(function() {
-            $("#driver").click(function(event){
-               $('#stage').load('/RestaurantManager-0.0.1/restaurant/categories');
+         $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: 'http://3.88.210.26:8080/RestaurantManager-0.0.1/order/orders/',
+                success: function (data) {
+                    var jsonData = $.parseJSON(data);
+
+
+                    for (var i = 0; i < jsonData.length; i++) {
+                        var obj = jsonData[i];
+                        console.log("data: " + obj);
+                        var restaurant = '';
+                        var restaurantId = '';
+                        var baseAmount = "";
+                        var tax = "baseAmount";
+                        var total = "";
+
+
+                        id = obj.id;
+                        restaurantId = obj.restaurantId;
+                        baseAmount = obj.baseAmount;
+                        tax = obj.tax;
+                        total = obj.total;
+
+                        restaurant += '<div id=id>Order '+id+'</div>';
+                        restaurant += '<div id=restaurantId>    Restaurant ID: '+restaurantId+'</div>';
+                        restaurant += '<div id=searchCount>    Sub Total: '+baseAmount+'</div>';
+                        restaurant += '<div id=searchCount>    Tax: '+tax+'</div>';
+                        restaurant += '<div id=clickCount>    Total: '+total+'</div>';
+                        $('#stage').append('<p>' + restaurant + '</p>');
+                    }
+                }
             });
-         });
+        });
       </script>
     <meta charset="UTF-8">
 </head>
 <body>
-    <p>Click on the button to load restaurant/categories file −</p>
+
+    <h1>Restaurant Search Statistics</h1>
 
     <div id = "stage" style = "background-color:cc0;">
-        STAGE
     </div>
-
-    <input type = "button" id = "driver" value = "Load Data" />
-
-    <h1>Add User</h1>
-
-    <form action="/RestaurantManager/somewhere_else" method="post">
-        <p>
-            Name: <input type="text" th:field="*{name}">
-        </p>
-        <p>
-            Occupation: <input type="text" th:field="*{location}">
-        </p>
-        <p>
-            Name: <input type="text" th:field="*{category}">
-        </p>
-        <p>
-            <input type="submit" value="Submit"/> <input type="reset" value="Reset">
-        </p>
-    </form>
 
 </body>
 </html>
